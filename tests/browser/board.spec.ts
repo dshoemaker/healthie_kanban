@@ -43,6 +43,8 @@ async function drag(page: Page, source: Locator, target: Locator, vertical = 0.5
   // Let the drag preview and collision detection settle before releasing.
   await page.waitForTimeout(250);
   await page.mouse.up();
+  // Wait for dnd-kit's drop animation before starting another interaction.
+  await expect(page.locator('[data-dnd-dragging], [data-dnd-dropping]')).toHaveCount(0);
 }
 
 test('pointer dragging reorders a card from first to last', async ({ page }) => {
@@ -62,4 +64,14 @@ test('a card can move into an empty column', async ({ page }) => {
   await addTask(page, 'D');
   await expect(column(page, 'Doing').getByRole('heading', { level: 3 })).toHaveText(['A']);
   await expect(column(page, 'To Do').getByRole('heading', { level: 3 })).toHaveText(['B', 'C', 'D']);
+});
+
+test('a task can transfer between cards in a populated column', async ({ page }) => {
+  await drag(page, card(page, 'A'), column(page, 'Doing'), 0.7);
+  await drag(page, card(page, 'C'), column(page, 'Doing'), 0.9);
+  await expect(column(page, 'Doing').getByRole('heading', { level: 3 })).toHaveText(['A', 'C']);
+  await drag(page, card(page, 'B'), card(page, 'C'), 0.1);
+  await addTask(page, 'D');
+  await expect(column(page, 'Doing').getByRole('heading', { level: 3 })).toHaveText(['A', 'B', 'C']);
+  await expect(column(page, 'To Do').getByRole('heading', { level: 3 })).toHaveText(['D']);
 });

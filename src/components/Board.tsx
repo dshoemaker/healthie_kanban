@@ -28,6 +28,10 @@ export function Board({
 }: BoardProps) {
   return (
     <DragDropProvider
+      onDragOver={(event) => {
+        // React owns card placement; avoid optimistic DOM reparenting across columns.
+        event.preventDefault();
+      }}
       onDragEnd={(event) => {
         if (event.canceled) {
           return;
@@ -56,22 +60,20 @@ export function Board({
           return;
         }
 
-        const destinationColumn = columns.find(
-          (column) => column.id === source.group,
+        const targetTask = tasks.find((task) => task.id === target.id);
+
+        if (!targetTask || targetTask.id === taskId) {
+          return;
+        }
+
+        const destinationTasks = tasks.filter(
+          (task) => task.columnId === targetTask.columnId,
+        );
+        const index = destinationTasks.findIndex(
+          (task) => task.id === targetTask.id,
         );
 
-        if (!destinationColumn) {
-          return;
-        }
-
-        if (
-          source.initialGroup === source.group &&
-          source.initialIndex === source.index
-        ) {
-          return;
-        }
-
-        onMoveTask(taskId, destinationColumn.id, source.index);
+        onMoveTask(taskId, targetTask.columnId, index);
       }}
     >
       <div className={styles.board}>
