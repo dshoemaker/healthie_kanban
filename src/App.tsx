@@ -1,3 +1,4 @@
+import { AssigneePreview } from './components/AssigneePreview';
 import { Board } from './components/Board';
 import styles from './App.module.css';
 
@@ -12,6 +13,7 @@ function App() {
       </header>
 
       <Board />
+      <AssigneePreview />
     </main>
   );
 }
