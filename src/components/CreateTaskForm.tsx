@@ -13,6 +13,7 @@ export function CreateTaskForm({
   onCreate,
 }: CreateTaskFormProps) {
   const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [assigneeId, setAssigneeId] = useState('');
 
   function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
@@ -29,10 +30,12 @@ export function CreateTaskForm({
 
     onCreate({
       title: trimmedTitle,
+      description,
       assigneeId,
     });
 
     setTitle('');
+    setDescription('');
     setAssigneeId('');
   }
 
@@ -50,6 +53,16 @@ export function CreateTaskForm({
             onChange={(event) => setTitle(event.target.value)}
             placeholder="What needs doing?"
             required
+          />
+        </label>
+
+        <label className={styles.field}>
+          <span>Description</span>
+          <textarea
+            className={styles.control}
+            value={description}
+            onChange={(event) => setDescription(event.target.value)}
+            rows={3}
           />
         </label>
 
