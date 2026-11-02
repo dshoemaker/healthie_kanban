@@ -6,11 +6,13 @@ import styles from './CreateTaskForm.module.css';
 type CreateTaskFormProps = {
   assignees: Assignee[];
   onCreate: (input: NewTaskInput) => void;
+  onCancel?: () => void;
 };
 
 export function CreateTaskForm({
   assignees,
   onCreate,
+  onCancel,
 }: CreateTaskFormProps) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -103,13 +105,20 @@ export function CreateTaskForm({
           </select>
         </label>
 
-        <button
-          className={styles.button}
-          type="submit"
-          disabled={!title.trim() || !assigneeId}
-        >
-          Add task
-        </button>
+        <div className={styles.actions}>
+          {onCancel && (
+            <button className={styles.cancel} type="button" onClick={onCancel}>
+              Cancel
+            </button>
+          )}
+          <button
+            className={styles.button}
+            type="submit"
+            disabled={!title.trim() || !assigneeId}
+          >
+            Add task
+          </button>
+        </div>
       </div>
     </form>
   );

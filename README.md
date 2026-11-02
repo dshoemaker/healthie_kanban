@@ -43,6 +43,7 @@ Browser tests start their own Vite server on port 4173; leave that port free. Fa
 
 ## Behavior and limits
 
+- Press **Add task** to open the creation modal. Cancel, Escape, or clicking the backdrop dismisses it and discards the draft. Valid submission closes it and restores focus to the button.
 - Create tasks with a required title and assignee, an optional description, and nonnegative whole-number points (default 0). New tasks start in To Do.
 - Drag using the card handle, or focus it and use Space, arrow keys, and Space again.
 - Drop on a card to change its position, or on a column background to append it.

@@ -22,9 +22,10 @@ test('a valid submission creates a task in To Do with its selected assignee', as
   loadAssignees();
   const user = userEvent.setup();
   render(<App />);
+  await user.click(await screen.findByRole('button', { name: 'Add task' }));
   await user.type(await screen.findByRole('textbox', { name: 'Title' }), 'Repair portal');
   await user.selectOptions(screen.getByRole('combobox', { name: 'Assign to' }), '2');
-  await user.click(screen.getByRole('button', { name: 'Add task' }));
+  await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Add task' }));
   expect(column('To Do').getByRole('heading', { name: 'Repair portal' })).toBeVisible();
   expect(column('To Do').getByText('Morty Smith')).toBeVisible();
   expect(screen.getAllByRole('article')).toHaveLength(1);
@@ -34,22 +35,26 @@ test('a successful submission clears the title and assignee fields', async () =>
   loadAssignees();
   const user = userEvent.setup();
   render(<App />);
+  await user.click(await screen.findByRole('button', { name: 'Add task' }));
   const title = await screen.findByRole('textbox', { name: 'Title' });
   const assignee = screen.getByRole('combobox', { name: 'Assign to' });
   await user.type(title, 'Repair portal');
   await user.selectOptions(assignee, '1');
+  await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Add task' }));
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   await user.click(screen.getByRole('button', { name: 'Add task' }));
-  expect(title).toHaveValue('');
-  expect(assignee).toHaveValue('');
+  expect(screen.getByRole('textbox', { name: 'Title' })).toHaveValue('');
+  expect(screen.getByRole('combobox', { name: 'Assign to' })).toHaveValue('');
 });
 
 test('a whitespace-only title cannot create a task', async () => {
   loadAssignees();
   const user = userEvent.setup();
   render(<App />);
+  await user.click(await screen.findByRole('button', { name: 'Add task' }));
   await user.type(await screen.findByRole('textbox', { name: 'Title' }), '   ');
   await user.selectOptions(screen.getByRole('combobox', { name: 'Assign to' }), '1');
-  await user.click(screen.getByRole('button', { name: 'Add task' }));
+  await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Add task' }));
   expect(screen.queryByRole('article')).not.toBeInTheDocument();
 });
 
@@ -57,9 +62,10 @@ test('accepted titles have leading and trailing whitespace removed', async () =>
   loadAssignees();
   const user = userEvent.setup();
   render(<App />);
+  await user.click(await screen.findByRole('button', { name: 'Add task' }));
   await user.type(await screen.findByRole('textbox', { name: 'Title' }), '  Repair portal  ');
   await user.selectOptions(screen.getByRole('combobox', { name: 'Assign to' }), '1');
-  await user.click(screen.getByRole('button', { name: 'Add task' }));
+  await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Add task' }));
   expect(column('To Do').getByRole('heading', { level: 3 }).textContent).toBe('Repair portal');
 });
 
@@ -67,8 +73,9 @@ test('missing title prevents creation', async () => {
   loadAssignees();
   const user = userEvent.setup();
   render(<App />);
+  await user.click(await screen.findByRole('button', { name: 'Add task' }));
   await user.selectOptions(await screen.findByRole('combobox', { name: 'Assign to' }), '1');
-  await user.click(screen.getByRole('button', { name: 'Add task' }));
+  await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Add task' }));
   expect(screen.queryByRole('article')).not.toBeInTheDocument();
 });
 
@@ -76,8 +83,9 @@ test('missing assignee prevents creation', async () => {
   loadAssignees();
   const user = userEvent.setup();
   render(<App />);
+  await user.click(await screen.findByRole('button', { name: 'Add task' }));
   await user.type(await screen.findByRole('textbox', { name: 'Title' }), 'Repair portal');
-  await user.click(screen.getByRole('button', { name: 'Add task' }));
+  await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Add task' }));
   expect(screen.queryByRole('article')).not.toBeInTheDocument();
 });
 
@@ -86,9 +94,10 @@ test('multiple tasks retain creation order even with identical titles', async ()
   const user = userEvent.setup();
   render(<App />);
   for (const id of ['1', '2']) {
+    await user.click(await screen.findByRole('button', { name: 'Add task' }));
     await user.type(await screen.findByRole('textbox', { name: 'Title' }), 'Repair portal');
     await user.selectOptions(screen.getByRole('combobox', { name: 'Assign to' }), id);
-    await user.click(screen.getByRole('button', { name: 'Add task' }));
+    await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Add task' }));
   }
   const cards = column('To Do').getAllByRole('article');
   expect(cards).toHaveLength(2);

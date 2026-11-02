@@ -1,9 +1,6 @@
 .form {
-  margin-bottom: 28px;
-  padding: 20px;
+  margin: 0;
   background: white;
-  border: 1px solid #dce2ec;
-  border-radius: 12px;
 }
 
 .heading {
@@ -12,8 +9,8 @@
 }
 
 .fields {
-  display: flex;
-  align-items: flex-end;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
 }
 
@@ -27,7 +24,13 @@
   font-weight: 600;
 }
 
+.field:first-child,
+.field:has(textarea) {
+  grid-column: 1 / -1;
+}
+
 .control {
+  font: inherit;
   width: 100%;
   min-height: 44px;
   padding: 10px 12px;
@@ -35,6 +38,13 @@
   background: white;
   border: 1px solid #aab6c8;
   border-radius: 6px;
+}
+
+.actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
 }
 
 .button {
@@ -65,7 +75,32 @@
 
 @media (max-width: 700px) {
   .fields {
-    flex-direction: column;
-    align-items: stretch;
+    grid-template-columns: 1fr;
   }
+}
+
+textarea.control {
+  resize: vertical;
+  min-height: 112px;
+}
+
+.cancel {
+  min-height: 44px;
+  padding: 10px 16px;
+  color: #3454b4;
+  background: white;
+  border: 1px solid #aab6c8;
+  border-radius: 6px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cancel:hover {
+  background: #eaf0f7;
+}
+
+.cancel:focus-visible {
+  outline: 3px solid #3454b4;
+  outline-offset: 3px;
 }

@@ -1,0 +1,39 @@
+.trigger {
+  margin-bottom: 24px;
+  padding: 12px 20px;
+  color: white;
+  background: #3454b4;
+  border: 0;
+  border-radius: 8px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.trigger:hover {
+  background: #294393;
+}
+
+.trigger:focus-visible {
+  outline: 3px solid #3454b4;
+  outline-offset: 3px;
+}
+
+.dialog {
+  width: min(560px, calc(100vw - 32px));
+  max-height: calc(100dvh - 48px);
+  padding: 0;
+  color: #172033;
+  background: white;
+  border: 1px solid #dce2ec;
+  border-radius: 16px;
+  box-shadow: 0 24px 80px rgb(23 32 51 / 24%);
+}
+
+.dialog::backdrop {
+  background: rgb(23 32 51 / 50%);
+}
+
+.content {
+  padding: 24px;
+}

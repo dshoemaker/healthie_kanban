@@ -1,6 +1,6 @@
 import { useReducer } from 'react';
 import { Board } from './components/Board';
-import { CreateTaskForm } from './components/CreateTaskForm';
+import { CreateTaskModal } from './components/CreateTaskModal';
 import { useAssignees } from './hooks/useAssignees';
 import { taskReducer } from './taskReducer';
 import type { ColumnId, NewTaskInput } from './types';
@@ -56,7 +56,7 @@ function App() {
 
       {assigneesState.status === 'success' && (
         assigneesState.assignees.length > 0 ? (
-          <CreateTaskForm
+          <CreateTaskModal
             assignees={assigneesState.assignees}
             onCreate={handleCreateTask}
           />

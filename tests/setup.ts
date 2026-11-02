@@ -6,3 +6,14 @@ afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
 });
+
+// jsdom has no native top layer. Reflect only dialog visibility here;
+// real-browser tests verify focus, modality, Escape and backdrop behavior.
+if (!HTMLDialogElement.prototype.showModal) {
+  HTMLDialogElement.prototype.showModal = function () {
+    this.setAttribute('open', '');
+  };
+  HTMLDialogElement.prototype.close = function () {
+    this.removeAttribute('open');
+  };
+}

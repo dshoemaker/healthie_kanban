@@ -20,9 +20,7 @@ test.beforeEach(async ({ page }) => {
   }));
   await page.goto('/');
   for (const title of ['A', 'B', 'C']) {
-    await page.getByRole('textbox', { name: 'Title' }).fill(title);
-    await page.getByRole('combobox', { name: 'Assign to' }).selectOption('1');
-    await page.getByRole('button', { name: 'Add task' }).click();
+    await addTask(page, title);
   }
 });
 
@@ -35,9 +33,12 @@ function card(page: Page, title: string) {
 }
 
 async function addTask(page: Page, title: string) {
-  await page.getByRole('textbox', { name: 'Title' }).fill(title);
-  await page.getByRole('combobox', { name: 'Assign to' }).selectOption('1');
   await page.getByRole('button', { name: 'Add task' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Create a task' });
+  await dialog.getByRole('textbox', { name: 'Title' }).fill(title);
+  await dialog.getByRole('combobox', { name: 'Assign to' }).selectOption('1');
+  await dialog.getByRole('button', { name: 'Add task' }).click();
+  await expect(dialog).toBeHidden();
 }
 
 async function drag(page: Page, source: Locator, target: Locator, vertical = 0.5, cancel = false) {
