@@ -12,3 +12,5 @@ export type Task = {
   assigneeId: string;
   columnId: ColumnId;
 };
+
+export type NewTaskInput = Pick<Task, 'title' | 'assigneeId'>;

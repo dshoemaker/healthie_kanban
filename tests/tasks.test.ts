@@ -4,7 +4,6 @@ import type { Task } from '../src/types';
 
 const a: Task = { id: 'a', title: 'A', assigneeId: '1', columnId: 'todo' };
 const b: Task = { id: 'b', title: 'B', assigneeId: '2', columnId: 'todo' };
-const c: Task = { id: 'c', title: 'C', assigneeId: '1', columnId: 'todo' };
 
 test('adding a task appends it without mutating previous state', () => {
   const before = [a];

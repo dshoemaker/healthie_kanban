@@ -12,25 +12,28 @@ test('a pending assignee request shows loading', () => {
   vi.stubGlobal('fetch', vi.fn(() => new Promise<Response>(() => {})));
   render(<App />);
   expect(screen.getByRole('status')).toHaveTextContent('Loading assignees');
+  expect(screen.queryByRole('button', { name: 'Add task' })).not.toBeInTheDocument();
 });
 
 test('successful loading displays the returned assignees', async () => {
   respond({ data: { characters: { results: [rick] } } });
   render(<App />);
-  expect(await screen.findByRole('listitem')).toHaveTextContent('Rick Sanchez');
+  expect(await screen.findByRole('option', { name: 'Rick Sanchez' })).toHaveTextContent('Rick Sanchez');
   expect(screen.queryByRole('status')).not.toBeInTheDocument();
 });
 
 test('an empty success explains that no assignees were found', async () => {
   respond({ data: { characters: { results: [] } } });
   render(<App />);
-  expect(await screen.findByText('No assignees found.')).toBeVisible();
+  expect(await screen.findByText('No assignees are available. Tasks require an assignee.')).toBeVisible();
+  expect(screen.queryByRole('button', { name: 'Add task' })).not.toBeInTheDocument();
 });
 
 test('a failed request displays the error instead of loading forever', async () => {
   respond({}, 429);
   render(<App />);
   expect(await screen.findByRole('alert')).toHaveTextContent('Too many requests. Please try again later.');
+  expect(screen.queryByRole('button', { name: 'Add task' })).not.toBeInTheDocument();
   expect(screen.queryByRole('status')).not.toBeInTheDocument();
 });
 
