@@ -33,6 +33,10 @@ export async function fetchAssignees(
     signal,
   });
 
+  if (response.status === 429) {
+    throw new Error('Too many requests. Please try again later.');
+  }
+
   if (!response.ok) {
     throw new Error(`Assignee request failed (${response.status}).`);
   }

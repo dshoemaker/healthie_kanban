@@ -52,3 +52,10 @@ test('network failures propagate to the caller', async () => {
   vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Network offline')));
   await expect(fetchAssignees(new AbortController().signal)).rejects.toThrow('Network offline');
 });
+
+test('a 429 explains rate limiting without retrying automatically', async () => {
+  const fetch = respond({}, 429, { 'Retry-After': '60' });
+  await expect(fetchAssignees(new AbortController().signal))
+    .rejects.toThrow('Too many requests. Please try again later.');
+  expect(fetch).toHaveBeenCalledTimes(1);
+});
