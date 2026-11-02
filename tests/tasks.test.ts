@@ -28,3 +28,32 @@ test('moving C from last to first produces C A B', () => {
   const result = taskReducer([a, b, c], { type: 'taskMoved', taskId: 'c', columnId: 'todo', index: 0 });
   expect(order(result, 'todo')).toEqual(['c', 'a', 'b']);
 });
+
+test('moving a task into empty Doing changes its column and preserves its data', () => {
+  const result = taskReducer([a, b], { type: 'taskMoved', taskId: 'a', columnId: 'doing', index: 0 });
+  expect(order(result, 'todo')).toEqual(['b']);
+  expect(order(result, 'doing')).toEqual(['a']);
+  expect(result.find((task) => task.id === 'a')).toEqual({
+    id: 'a', title: 'A', assigneeId: '1', columnId: 'doing',
+  });
+  expect(result).toHaveLength(2);
+});
+
+test('a cross-column transfer can insert before existing destination tasks', () => {
+  const result = taskReducer([a, { ...b, columnId: 'doing' }, { ...c, columnId: 'doing' }],
+    { type: 'taskMoved', taskId: 'a', columnId: 'doing', index: 0 });
+  expect(order(result, 'todo')).toEqual([]);
+  expect(order(result, 'doing')).toEqual(['a', 'b', 'c']);
+});
+
+test('a cross-column transfer can insert between destination tasks', () => {
+  const result = taskReducer([a, { ...b, columnId: 'doing' }, { ...c, columnId: 'doing' }],
+    { type: 'taskMoved', taskId: 'a', columnId: 'doing', index: 1 });
+  expect(order(result, 'doing')).toEqual(['b', 'a', 'c']);
+});
+
+test('a cross-column transfer can append after destination tasks', () => {
+  const result = taskReducer([a, { ...b, columnId: 'done' }, { ...c, columnId: 'done' }],
+    { type: 'taskMoved', taskId: 'a', columnId: 'done', index: 2 });
+  expect(order(result, 'done')).toEqual(['b', 'c', 'a']);
+});
