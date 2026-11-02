@@ -1,6 +1,6 @@
-# React + TypeScript + Vite
+# Dimension Board
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A frontend-only Kanban board built with React, TypeScript 7, Vite, dnd-kit and CSS Modules.
 
 ## Run locally
 
@@ -13,31 +13,42 @@ npm ci
 npm run dev
 ```
 
-Currently, two official plugins are available:
+Open the URL printed by Vite. Assignees come from the public Rick and Morty GraphQL API; no credentials are needed.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Checks
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```sh
+npm test
+npm run typecheck
+npm run lint
+npm run build
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+`npm run test:watch` watches unit/component tests. Tests use controlled HTTP responses rather than the live public service.
+
+For real-browser drag-and-drop tests:
+
+```sh
+npx playwright install chromium
+npm run test:e2e
+```
+
+If Google Chrome is already installed, it can be used instead:
+
+```sh
+PLAYWRIGHT_CHANNEL=chrome npm run test:e2e
+```
+
+Browser tests start their own Vite server on port 4173; leave that port free. Failed runs retain Playwright traces under `test-results/`.
+
+## Behavior and limits
+
+- Create tasks with a required title and assignee. New tasks start in To Do.
+- Drag using the card handle, or focus it and use Space, arrow keys, and Space again.
+- Drop on a card to change its position, or on a column background to append it.
+- Task state lives in memory and clears on refresh.
+- Only the first page of assignees is loaded.
+- A 429 shows a rate-limit message. There are no automatic retries, countdowns, or scheduled requests, including when `Retry-After` is present.
+- Cards change position on drop. React owns their DOM placement to avoid cross-column conflicts with optimistic sorting.
+- The required Done celebration is not implemented yet. Filtering and persistence remain potential interview extensions.
+
