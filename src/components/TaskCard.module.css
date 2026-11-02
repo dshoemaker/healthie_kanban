@@ -1,13 +1,40 @@
+.slot {
+  position: relative;
+  isolation: isolate;
+}
+
 .card {
   position: relative;
+  z-index: 1;
   cursor: grab;
   touch-action: none;
   user-select: none;
+  border-radius: 10px;
+}
+
+.surface {
   padding: 16px;
   background: white;
   border: 1px solid #dce2ec;
   border-radius: 10px;
   box-shadow: 0 2px 4px rgb(23 32 51 / 4%);
+}
+
+.arriving {
+  animation-name: materialize;
+  animation-timing-function: ease-out;
+  animation-fill-mode: both;
+}
+
+@keyframes materialize {
+  0%, 20% { opacity: 0; transform: scale(0.2); }
+  60%, 100% { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arriving {
+    animation: none;
+  }
 }
 
 .title {

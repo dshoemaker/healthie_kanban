@@ -53,5 +53,7 @@ Browser tests start their own Vite server on port 4173; leave that port free. Fa
 - Only the first page of assignees is loaded.
 - A 429 shows a rate-limit message. There are no automatic retries, countdowns, or scheduled requests, including when `Retry-After` is present.
 - Cards change position on drop. React owns their DOM placement to avoid cross-column conflicts with optimistic sorting.
-- The required Done celebration is not implemented yet. Filtering and persistence remain potential interview extensions.
+- Moving a task from To Do or Doing into Done opens a green CSS portal and materializes the card over 1.6 seconds. Reordering within Done, editing, and canceled moves do not start a celebration. Leaving and returning to Done celebrates again.
+- Reduced-motion preferences replace the teleport animation with a static portal glow. Completion feedback is also announced to screen readers.
+- Filtering and persistence remain potential interview extensions.
 

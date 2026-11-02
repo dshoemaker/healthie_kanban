@@ -1,0 +1,71 @@
+.portal {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(240px, 90%);
+  aspect-ratio: 1.35;
+  overflow: hidden;
+  border: 2px solid #3b7e24;
+  border-radius: 50%;
+  background: #a5ef45;
+  pointer-events: none;
+  animation-name: openPortal;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: both;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 0 12px #7edb38);
+}
+
+.rim,
+.swirl,
+.core {
+  position: absolute;
+  inset: 0;
+  border-radius: 46% 54% 49% 51% / 52% 45% 55% 48%;
+}
+
+.rim {
+  background: repeating-conic-gradient(#a5ef45 0deg 12deg, #3b9e27 18deg 25deg, #d9ff84 30deg 36deg);
+  box-shadow: 0 0 0 3px #336c21, 0 0 18px #b5fc4b;
+  animation: spin 1.2s linear infinite;
+}
+
+.swirl {
+  inset: 8px;
+  background: repeating-conic-gradient(from 35deg, #4d9e2e 0deg 35deg, #caff65 60deg 80deg, #72c930 110deg 130deg);
+  box-shadow: inset 0 0 14px #245a20;
+  animation: spin 1.8s linear infinite reverse;
+}
+
+.core {
+  inset: 18px;
+  background: radial-gradient(ellipse at 55% 45%, #e8ffa3, #a5ed4b 34%, #5daf30 70%, transparent 73%);
+  opacity: 0.85;
+}
+
+.announcement {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@keyframes openPortal {
+  0% { transform: translate(-50%, -50%) scale(0.05); opacity: 0; }
+  20%, 60% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(0.05); opacity: 0; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portal,
+  .rim,
+  .swirl {
+    animation: none;
+  }
+}

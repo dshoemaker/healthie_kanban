@@ -238,3 +238,81 @@ test('picking up and returning a card to the same spot does not open details', a
   await expect(page.getByRole('dialog', { name: 'Task details' })).toBeHidden();
   await expect(column(page, 'To Do').getByRole('heading', { level: 3 })).toHaveText(['A', 'B', 'C']);
 });
+
+test('moving a task into Done celebrates its completion', async ({ page }) => {
+  await expect(page.getByRole('status', { name: 'Task completed: A' })).toHaveCount(0);
+  await drag(page, card(page, 'A'), column(page, 'Done'), 0.7);
+  await expect(page.getByRole('status', { name: 'Task completed: A' })).toBeVisible();
+  await expect(column(page, 'Done').getByRole('heading', { level: 3 })).toHaveText(['A']);
+});
+
+test('moving a completed task out of Done clears its celebration', async ({ page }) => {
+  await drag(page, card(page, 'A'), column(page, 'Done'), 0.7);
+  await expect(page.getByRole('status', { name: 'Task completed: A' })).toBeVisible();
+  await drag(page, card(page, 'A'), column(page, 'Doing'), 0.7);
+  await expect(page.getByRole('status', { name: 'Task completed: A' })).toHaveCount(0);
+  await expect(column(page, 'Doing').getByRole('heading', { level: 3 })).toHaveText(['A']);
+});
+
+test('the completion celebration clears after its short animation', async ({ page }) => {
+  await drag(page, card(page, 'A'), column(page, 'Done'), 0.7);
+  const celebration = page.getByRole('status', { name: 'Task completed: A' });
+  await expect(celebration).toBeVisible();
+  await expect(celebration).toHaveCount(0, { timeout: 3000 });
+  await expect(column(page, 'Done').getByRole('heading', { level: 3 })).toHaveText(['A']);
+});
+
+test('reordering within Done does not start another celebration', async ({ page }) => {
+  await drag(page, card(page, 'A'), column(page, 'Done'), 0.7);
+  await expect(page.getByRole('status', { name: 'Task completed: A' })).toHaveCount(0);
+  await drag(page, card(page, 'B'), column(page, 'Done'), 0.7);
+  await expect(page.getByRole('status', { name: 'Task completed: B' })).toHaveCount(0);
+  await drag(page, card(page, 'B'), card(page, 'A'), 0.2);
+  await expect(column(page, 'Done').getByRole('heading', { level: 3 })).toHaveText(['B', 'A']);
+  await expect(page.getByRole('status', { name: /^Task completed:/ })).toHaveCount(0);
+});
+
+test('a task returning from Doing celebrates again', async ({ page }) => {
+  await drag(page, card(page, 'A'), column(page, 'Done'), 0.7);
+  await expect(page.getByRole('status', { name: 'Task completed: A' })).toHaveCount(0);
+  await drag(page, card(page, 'A'), column(page, 'Doing'), 0.7);
+  await expect(page.getByRole('status', { name: /^Task completed:/ })).toHaveCount(0);
+  await drag(page, card(page, 'A'), column(page, 'Done'), 0.7);
+  await expect(page.getByRole('status', { name: 'Task completed: A' })).toBeVisible();
+});
+
+test('the arriving card animates through a portal in Done', async ({ page }) => {
+  await drag(page, card(page, 'A'), column(page, 'Done'), 0.7);
+  await expect(column(page, 'Done').getByRole('status', { name: 'Task completed: A' })).toBeVisible();
+  await expect.poll(() => card(page, 'A').evaluate((element) => element.getAnimations({ subtree: true }).length))
+    .toBeGreaterThan(0);
+});
+
+test('reduced motion keeps completion feedback without movement', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await drag(page, card(page, 'A'), column(page, 'Done'), 0.7);
+  const celebration = column(page, 'Done').getByRole('status', { name: 'Task completed: A' });
+  await expect(celebration).toBeVisible();
+  expect(await celebration.evaluate((element) => element.getAnimations({ subtree: true }).length)).toBe(0);
+  expect(await card(page, 'A').evaluate((element) => element.getAnimations({ subtree: true }).length)).toBe(0);
+  await expect(card(page, 'A')).toBeVisible();
+  await expect(celebration).toHaveCount(0, { timeout: 3000 });
+});
+
+test('canceling a move into Done does not celebrate', async ({ page }) => {
+  await drag(page, card(page, 'A'), column(page, 'Done'), 0.7, true);
+  await expect(page.getByRole('status', { name: /^Task completed:/ })).toHaveCount(0);
+  await expect(column(page, 'To Do').getByRole('heading', { level: 3 })).toHaveText(['A', 'B', 'C']);
+  await expect(column(page, 'Done').getByRole('article')).toHaveCount(0);
+});
+
+test('editing a task already in Done does not replay its celebration', async ({ page }) => {
+  await drag(page, card(page, 'A'), column(page, 'Done'), 0.7);
+  await expect(page.getByRole('status', { name: 'Task completed: A' })).toHaveCount(0);
+  await card(page, 'A').click();
+  const dialog = page.getByRole('dialog', { name: 'Task details' });
+  await dialog.getByRole('textbox', { name: 'Title' }).fill('Finished A');
+  await dialog.getByRole('button', { name: 'Save changes' }).click();
+  await expect(column(page, 'Done').getByRole('heading', { level: 3 })).toHaveText(['Finished A']);
+  await expect(page.getByRole('status', { name: /^Task completed:/ })).toHaveCount(0);
+});
