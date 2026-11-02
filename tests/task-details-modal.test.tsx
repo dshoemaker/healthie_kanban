@@ -54,7 +54,7 @@ test('Save changes updates the existing card and retains the edited details', as
   expect(screen.getAllByRole('article')).toHaveLength(1);
   const card = within(screen.getByRole('article'));
   expect(card.getByRole('heading', { name: 'Calibrate portal' })).toBeVisible();
-  expect(card.getByText('8 points')).toBeVisible();
+  expect(card.getByText('8', { exact: true })).toBeVisible();
   expect(card.getByText('Morty Smith')).toBeVisible();
   expect(card.getByAltText('')).toHaveAttribute('src', 'https://example.test/morty.png');
   await user.click(screen.getByRole('article'));
@@ -90,5 +90,5 @@ test('invalid edits keep the dialog open without updating the saved task', async
   expect(screen.getByRole('dialog', { name: 'Task details' })).toBeVisible();
   expect(points).toHaveValue(-1);
   await user.click(dialog.getByRole('button', { name: 'Cancel' }));
-  expect(within(screen.getByRole('article')).getByText('5 points')).toBeVisible();
+  expect(within(screen.getByRole('article')).getByText('5', { exact: true })).toBeVisible();
 });

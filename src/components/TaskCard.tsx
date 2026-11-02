@@ -86,7 +86,7 @@ export function TaskCard({
               {assigneeName}
             </p>
             <span className={styles.points}>
-              {points} {points === 1 ? 'point' : 'points'}
+              {points}
             </span>
           </div>
         </div>

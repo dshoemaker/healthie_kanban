@@ -144,7 +144,7 @@ test('dragging from the avatar moves the task to an empty column', async ({ page
   await expect(column(page, 'Doing').getByRole('heading', { level: 3 })).toHaveText(['A']);
   await expect(column(page, 'To Do').getByRole('heading', { level: 3 })).toHaveText(['B', 'C', 'D']);
   await expect(column(page, 'Doing').getByText('Rick Sanchez')).toBeVisible();
-  await expect(column(page, 'Doing').getByText('0 points')).toBeVisible();
+  await expect(column(page, 'Doing').getByText('0', { exact: true })).toBeVisible();
 });
 
 test('dragging from the assignee name moves the task', async ({ page }) => {
@@ -157,7 +157,7 @@ test('dragging from the assignee name moves the task', async ({ page }) => {
 
 test('dragging from the points badge reorders the task', async ({ page }) => {
   const source = card(page, 'A');
-  await drag(page, source, card(page, 'C'), 0.9, false, source.getByText('0 points'));
+  await drag(page, source, card(page, 'C'), 0.9, false, source.getByText('0', { exact: true }));
   await addTask(page, 'D');
   await expect(column(page, 'To Do').getByRole('heading', { level: 3 }))
     .toHaveText(['B', 'C', 'A', 'D']);
@@ -202,7 +202,7 @@ test('saving a moved task updates its details without changing columns or other 
   const updated = card(page, 'Updated A');
   await expect(updated).toBeFocused();
   await expect(updated.getByText('Morty Smith')).toBeVisible();
-  await expect(updated.getByText('8 points')).toBeVisible();
+  await expect(updated.getByText('8', { exact: true })).toBeVisible();
   await updated.click();
   await expect(dialog.getByRole('textbox', { name: 'Description' })).toHaveValue('Moved task notes.');
 });

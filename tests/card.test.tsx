@@ -38,14 +38,15 @@ test('a failed avatar is hidden while the assignee name remains visible', () => 
   expect(screen.getByText('Rick Sanchez')).toBeVisible();
 });
 
-test('a one-point card uses the singular label', () => {
+test('a card displays only the numeric points value', () => {
   renderCard(undefined, 1);
-  expect(screen.getByText('1 point')).toBeVisible();
+  expect(screen.getByText('1', { exact: true })).toBeVisible();
+  expect(screen.queryByText('1 point')).not.toBeInTheDocument();
 });
 
 test('a zero-point card still displays its points', () => {
   renderCard();
-  expect(screen.getByText('0 points')).toBeVisible();
+  expect(screen.getByText('0', { exact: true })).toBeVisible();
 });
 
 test('a replacement avatar can load after the previous image failed', () => {

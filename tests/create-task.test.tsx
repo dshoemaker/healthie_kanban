@@ -140,5 +140,5 @@ test('a created card displays the points entered in the form', async () => {
   await user.type(points, '5');
   await user.selectOptions(form.getByRole('combobox', { name: 'Assign to' }), '1');
   await user.click(form.getByRole('button', { name: 'Add task' }));
-  expect(column('To Do').getByText('5 points')).toBeVisible();
+  expect(column('To Do').getByText('5', { exact: true })).toBeVisible();
 });

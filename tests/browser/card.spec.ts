@@ -25,6 +25,6 @@ test('a new card loads its selected avatar and displays its points', async ({ pa
     image instanceof HTMLImageElement && image.complete && image.naturalWidth > 0,
   )).toBe(true);
   await expect(card.getByText('Morty Smith')).toBeVisible();
-  await expect(card.getByText('5 points')).toBeVisible();
+  await expect(card.getByText('5', { exact: true })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath('card-avatar-points.png') });
 });
