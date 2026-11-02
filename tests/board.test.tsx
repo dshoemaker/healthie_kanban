@@ -1,6 +1,6 @@
 import type { Task } from '../src/types';
 import { render, screen, within } from '@testing-library/react';
-import { expect, test } from 'vitest';
+import { expect, test, vi } from 'vitest';
 import { Board } from '../src/components/Board';
 
 const assignees = [
@@ -17,13 +17,13 @@ const tasks: Task[] = [
 ];
 
 test('board presents To Do, Doing, and Done in order', () => {
-  render(<Board tasks={tasks} assignees={assignees} />);
+  render(<Board tasks={tasks} assignees={assignees} onMoveTask={vi.fn()} />);
   expect(screen.getAllByRole('heading', { level: 2 }).map((heading) => heading.textContent))
     .toEqual(['To Do', 'Doing', 'Done']);
 });
 
 test('sample tasks appear in their assigned columns and order', () => {
-  render(<Board tasks={tasks} assignees={assignees} />);
+  render(<Board tasks={tasks} assignees={assignees} onMoveTask={vi.fn()} />);
   const todo = screen.getByRole('heading', { name: 'To Do' }).closest('section')!;
   const doing = screen.getByRole('heading', { name: 'Doing' }).closest('section')!;
   const done = screen.getByRole('heading', { name: 'Done' }).closest('section')!;

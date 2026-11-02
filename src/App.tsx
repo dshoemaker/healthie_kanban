@@ -3,7 +3,7 @@ import { Board } from './components/Board';
 import { CreateTaskForm } from './components/CreateTaskForm';
 import { useAssignees } from './hooks/useAssignees';
 import { taskReducer } from './taskReducer';
-import type { NewTaskInput } from './types';
+import type { ColumnId, NewTaskInput } from './types';
 import styles from './App.module.css';
 
 function App() {
@@ -19,6 +19,19 @@ function App() {
         assigneeId: input.assigneeId,
         columnId: 'todo',
       },
+    });
+  }
+
+  function handleMoveTask(
+    taskId: string,
+    columnId: ColumnId,
+    index: number,
+  ) {
+    dispatch({
+      type: 'taskMoved',
+      taskId,
+      columnId,
+      index,
     });
   }
 
@@ -57,6 +70,7 @@ function App() {
             ? assigneesState.assignees
             : []
         }
+        onMoveTask={handleMoveTask}
       />
     </main>
   );

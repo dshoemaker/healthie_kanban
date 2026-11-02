@@ -1,4 +1,5 @@
 .card {
+  position: relative;
   padding: 16px;
   background: white;
   border: 1px solid #dce2ec;
@@ -7,13 +8,45 @@
 }
 
 .title {
-  margin: 0 0 12px;
+  margin: 0 36px 12px 0;
   font-size: 16px;
   line-height: 1.4;
+  overflow-wrap: anywhere;
 }
 
 .assignee {
   margin: 0;
   color: #526078;
   font-size: 14px;
+}
+
+.handle {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  color: #526078;
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  font-size: 24px;
+  cursor: grab;
+  touch-action: none;
+}
+
+.handle:hover {
+  background: #eaf0f7;
+}
+
+.handle:active {
+  cursor: grabbing;
+}
+
+.handle:focus-visible {
+  outline: 3px solid #3454b4;
+  outline-offset: 2px;
 }
