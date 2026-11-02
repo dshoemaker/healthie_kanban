@@ -20,3 +20,37 @@
   margin: 0;
   color: #526078;
 }
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.demoButton {
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid #aab6c8;
+  border-radius: 8px;
+  color: #3454b4;
+  background: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.demoButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.demoButton:focus-visible {
+  outline: 3px solid #3454b4;
+  outline-offset: 3px;
+}
+
+.demoHint {
+  color: #526078;
+  font-size: 13px;
+}

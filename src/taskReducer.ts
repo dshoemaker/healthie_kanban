@@ -1,6 +1,7 @@
 import type { ColumnId, NewTaskInput, Task } from './types';
 
 type TaskAction =
+  | { type: 'tasksReplaced'; tasks: Task[] }
   | {
       type: 'taskAdded';
       task: Task;
@@ -22,6 +23,9 @@ export function taskReducer(
   action: TaskAction,
 ): Task[] {
   switch (action.type) {
+    case 'tasksReplaced':
+      return [...action.tasks];
+
     case 'taskAdded':
       return [...tasks, action.task];
 
