@@ -16,6 +16,8 @@ function App() {
       task: {
         id: crypto.randomUUID(),
         title: input.title,
+        description: input.description,
+        points: input.points,
         assigneeId: input.assigneeId,
         columnId: 'todo',
       },

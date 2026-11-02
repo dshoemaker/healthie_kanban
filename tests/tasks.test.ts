@@ -2,8 +2,8 @@ import { expect, test } from 'vitest';
 import { taskReducer } from '../src/taskReducer';
 import type { Task } from '../src/types';
 
-const a: Task = { id: 'a', title: 'A', assigneeId: '1', columnId: 'todo' };
-const b: Task = { id: 'b', title: 'B', assigneeId: '2', columnId: 'todo' };
+const a: Task = { id: 'a', title: 'A', description: 'Replace the damaged power cell.', points: 5, assigneeId: '1', columnId: 'todo' };
+const b: Task = { id: 'b', title: 'B', description: '', points: 0, assigneeId: '2', columnId: 'todo' };
 
 test('adding a task appends it without mutating previous state', () => {
   const before = [a];
@@ -13,7 +13,7 @@ test('adding a task appends it without mutating previous state', () => {
   expect(before).toEqual([a]);
 });
 
-const c: Task = { id: 'c', title: 'C', assigneeId: '1', columnId: 'todo' };
+const c: Task = { id: 'c', title: 'C', description: '', points: 0, assigneeId: '1', columnId: 'todo' };
 
 function order(tasks: Task[], columnId: Task['columnId']) {
   return tasks.filter((task) => task.columnId === columnId).map((task) => task.id);
@@ -34,7 +34,7 @@ test('moving a task into empty Doing changes its column and preserves its data',
   expect(order(result, 'todo')).toEqual(['b']);
   expect(order(result, 'doing')).toEqual(['a']);
   expect(result.find((task) => task.id === 'a')).toEqual({
-    id: 'a', title: 'A', assigneeId: '1', columnId: 'doing',
+    id: 'a', title: 'A', description: 'Replace the damaged power cell.', points: 5, assigneeId: '1', columnId: 'doing',
   });
   expect(result).toHaveLength(2);
 });
@@ -82,8 +82,8 @@ test('moving to the same position preserves ordering', () => {
 
 test('moving does not mutate previous tasks or reorder unrelated columns', () => {
   const before: Task[] = [a, b, { ...c, columnId: 'doing' },
-    { id: 'd', title: 'D', assigneeId: '2', columnId: 'done' },
-    { id: 'e', title: 'E', assigneeId: '1', columnId: 'done' }];
+    { id: 'd', title: 'D', description: '', points: 0, assigneeId: '2', columnId: 'done' },
+    { id: 'e', title: 'E', description: '', points: 0, assigneeId: '1', columnId: 'done' }];
   const snapshot = structuredClone(before);
   before.forEach(Object.freeze);
   Object.freeze(before);
@@ -93,4 +93,31 @@ test('moving does not mutate previous tasks or reorder unrelated columns', () =>
   expect(order(result, 'doing')).toEqual(['a', 'c']);
   expect(order(result, 'done')).toEqual(['d', 'e']);
   expect(result).toHaveLength(5);
+});
+
+test('adding a task preserves its description and points in state', () => {
+  const task = {
+    id: 'task-1',
+    title: 'Repair portal',
+    description: 'Replace the damaged power cell.',
+    points: 5,
+    assigneeId: '1',
+    columnId: 'todo',
+  } satisfies Task;
+
+  const nextState = taskReducer([], {
+    type: 'taskAdded',
+    task,
+  });
+
+  expect(nextState).toEqual([
+    {
+      id: 'task-1',
+      title: 'Repair portal',
+      description: 'Replace the damaged power cell.',
+      points: 5,
+      assigneeId: '1',
+      columnId: 'todo',
+    },
+  ]);
 });

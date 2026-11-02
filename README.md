@@ -43,7 +43,7 @@ Browser tests start their own Vite server on port 4173; leave that port free. Fa
 
 ## Behavior and limits
 
-- Create tasks with a required title and assignee. New tasks start in To Do.
+- Create tasks with a required title and assignee, an optional description, and nonnegative whole-number points (default 0). New tasks start in To Do.
 - Drag using the card handle, or focus it and use Space, arrow keys, and Space again.
 - Drop on a card to change its position, or on a column background to append it.
 - Task state lives in memory and clears on refresh.

@@ -10,10 +10,10 @@ const assignees = [
   { id: '4', name: 'Beth Smith', image: '' },
 ];
 const tasks: Task[] = [
-  { id: 'a', title: 'Repair the portal gun', assigneeId: '1', columnId: 'todo' },
-  { id: 'b', title: 'Pack supplies', assigneeId: '2', columnId: 'todo' },
-  { id: 'c', title: 'Explore a new dimension', assigneeId: '3', columnId: 'doing' },
-  { id: 'd', title: 'Return to Earth', assigneeId: '4', columnId: 'done' },
+  { id: 'a', title: 'Repair the portal gun', description: '', points: 0, assigneeId: '1', columnId: 'todo' },
+  { id: 'b', title: 'Pack supplies', description: '', points: 0, assigneeId: '2', columnId: 'todo' },
+  { id: 'c', title: 'Explore a new dimension', description: '', points: 0, assigneeId: '3', columnId: 'doing' },
+  { id: 'd', title: 'Return to Earth', description: '', points: 0, assigneeId: '4', columnId: 'done' },
 ];
 
 test('board presents To Do, Doing, and Done in order', () => {

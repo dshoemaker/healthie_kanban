@@ -14,28 +14,37 @@ export function CreateTaskForm({
 }: CreateTaskFormProps) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [points, setPoints] = useState('0');
   const [assigneeId, setAssigneeId] = useState('');
 
   function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const trimmedTitle = title.trim();
+    const numericPoints = Number(points);
     const assigneeExists = assignees.some(
       (assignee) => assignee.id === assigneeId,
     );
 
-    if (!trimmedTitle || !assigneeExists) {
+    if (
+      !trimmedTitle ||
+      !assigneeExists ||
+      !Number.isInteger(numericPoints) ||
+      numericPoints < 0
+    ) {
       return;
     }
 
     onCreate({
       title: trimmedTitle,
       description,
+      points: numericPoints,
       assigneeId,
     });
 
     setTitle('');
     setDescription('');
+    setPoints('0');
     setAssigneeId('');
   }
 
@@ -63,6 +72,17 @@ export function CreateTaskForm({
             value={description}
             onChange={(event) => setDescription(event.target.value)}
             rows={3}
+          />
+        </label>
+
+        <label className={styles.field}>
+          <span>Points</span>
+          <input
+            className={styles.control}
+            type="number"
+            min={0}
+            value={points}
+            onChange={(event) => setPoints(event.target.value)}
           />
         </label>
 
