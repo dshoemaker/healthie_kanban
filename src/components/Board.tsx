@@ -8,6 +8,7 @@ import styles from './Board.module.css';
 type BoardProps = {
   tasks: Task[];
   assignees: Assignee[];
+  onOpenTask?: (taskId: string) => void;
   onMoveTask: (
     taskId: string,
     columnId: ColumnId,
@@ -25,6 +26,7 @@ export function Board({
   tasks,
   assignees,
   onMoveTask,
+  onOpenTask,
 }: BoardProps) {
   return (
     <DragDropProvider
@@ -97,6 +99,7 @@ export function Board({
                     index={index}
                     columnId={column.id}
                     title={task.title}
+                    onOpen={() => onOpenTask?.(task.id)}
                     points={task.points}
                     assigneeImage={assignee?.image}
                     assigneeName={

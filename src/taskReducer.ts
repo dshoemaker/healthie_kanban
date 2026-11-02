@@ -1,9 +1,14 @@
-import type { ColumnId, Task } from './types';
+import type { ColumnId, NewTaskInput, Task } from './types';
 
 type TaskAction =
   | {
       type: 'taskAdded';
       task: Task;
+    }
+  | {
+      type: 'taskUpdated';
+      taskId: string;
+      changes: NewTaskInput;
     }
   | {
       type: 'taskMoved';
@@ -19,6 +24,18 @@ export function taskReducer(
   switch (action.type) {
     case 'taskAdded':
       return [...tasks, action.task];
+
+    case 'taskUpdated':
+      return tasks.map((task) => {
+        if (task.id !== action.taskId) return task;
+        return {
+          ...task,
+          title: action.changes.title,
+          description: action.changes.description,
+          points: action.changes.points,
+          assigneeId: action.changes.assigneeId,
+        };
+      });
 
     case 'taskMoved': {
       const task = tasks.find((item) => item.id === action.taskId);

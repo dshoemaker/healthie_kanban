@@ -45,7 +45,8 @@ Browser tests start their own Vite server on port 4173; leave that port free. Fa
 
 - Press **Add task** to open the creation modal. Cancel, Escape, or clicking the backdrop dismisses it and discards the draft. Valid submission closes it and restores focus to the button.
 - Create tasks with a required title and assignee, an optional description, and nonnegative whole-number points (default 0). New tasks start in To Do.
-- Drag using the card handle, or focus it and use Space, arrow keys, and Space again.
+- Click a card, or focus it and press Enter, to open the expanded task editor. Save changes updates its title, description, points and assignee; Cancel, Escape or the backdrop discards edits.
+- Drag from anywhere on a card, including its title, avatar, assignee name or points badge. For keyboard movement, focus the card and use Space, arrow keys, and Space again.
 - Cards show the assigned person's API avatar and points. If the image is unavailable, the name remains visible.
 - Drop on a card to change its position, or on a column background to append it.
 - Task state lives in memory and clears on refresh.

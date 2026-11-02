@@ -121,3 +121,30 @@ test('adding a task preserves its description and points in state', () => {
     },
   ]);
 });
+
+test('editing task details preserves identity, column, order and previous state', () => {
+  const before: Task[] = [a, { ...b, columnId: 'doing' }, c];
+  const snapshot = structuredClone(before);
+  before.forEach(Object.freeze);
+  Object.freeze(before);
+  const result = taskReducer(before, {
+    type: 'taskUpdated',
+    taskId: 'b',
+    changes: {
+      title: 'Updated B', description: 'New description', points: 8, assigneeId: '1',
+    },
+  });
+  expect(result).toEqual([
+    a,
+    { id: 'b', columnId: 'doing', title: 'Updated B', description: 'New description', points: 8, assigneeId: '1' },
+    c,
+  ]);
+  expect(before).toEqual(snapshot);
+});
+
+test('editing an unknown task leaves existing tasks unchanged', () => {
+  expect(taskReducer([a, b], {
+    type: 'taskUpdated', taskId: 'missing',
+    changes: { title: 'Missing', description: '', points: 1, assigneeId: '1' },
+  })).toEqual([a, b]);
+});

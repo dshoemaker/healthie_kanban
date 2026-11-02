@@ -1,6 +1,7 @@
-import { useReducer } from 'react';
+import { useReducer, useState } from 'react';
 import { Board } from './components/Board';
 import { CreateTaskModal } from './components/CreateTaskModal';
+import { TaskDetailsModal } from './components/TaskDetailsModal';
 import { useAssignees } from './hooks/useAssignees';
 import { taskReducer } from './taskReducer';
 import type { ColumnId, NewTaskInput } from './types';
@@ -9,6 +10,8 @@ import styles from './App.module.css';
 function App() {
   const [tasks, dispatch] = useReducer(taskReducer, []);
   const assigneesState = useAssignees();
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const selectedTask = tasks.find((task) => task.id === selectedTaskId);
 
   function handleCreateTask(input: NewTaskInput) {
     dispatch({
@@ -73,7 +76,18 @@ function App() {
             : []
         }
         onMoveTask={handleMoveTask}
+        onOpenTask={setSelectedTaskId}
       />
+      {selectedTask && assigneesState.status === 'success' && (
+        <TaskDetailsModal
+          task={selectedTask}
+          assignees={assigneesState.assignees}
+          onClose={() => setSelectedTaskId(null)}
+          onSave={(changes) => dispatch({
+            type: 'taskUpdated', taskId: selectedTask.id, changes,
+          })}
+        />
+      )}
     </main>
   );
 }
