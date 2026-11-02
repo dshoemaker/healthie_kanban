@@ -15,9 +15,23 @@
 }
 
 .assignee {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin: 0;
   color: #526078;
   font-size: 14px;
+}
+
+.avatar {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .handle {
@@ -49,4 +63,22 @@
 .handle:focus-visible {
   outline: 3px solid #3454b4;
   outline-offset: 2px;
+}
+
+.metadata {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.points {
+  flex-shrink: 0;
+  padding: 4px 8px;
+  color: #3454b4;
+  background: #eaf0f7;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
 }

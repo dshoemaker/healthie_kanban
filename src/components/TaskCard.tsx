@@ -1,4 +1,5 @@
 import { useSortable } from '@dnd-kit/react/sortable';
+import { useState } from 'react';
 import type { ColumnId } from '../types';
 import styles from './TaskCard.module.css';
 
@@ -8,6 +9,8 @@ type TaskCardProps = {
   columnId: ColumnId;
   title: string;
   assigneeName: string;
+  assigneeImage?: string;
+  points: number;
 };
 
 export function TaskCard({
@@ -16,7 +19,10 @@ export function TaskCard({
   columnId,
   title,
   assigneeName,
+  assigneeImage,
+  points,
 }: TaskCardProps) {
+  const [failedImage, setFailedImage] = useState<string>();
   const { ref, handleRef } = useSortable({
     id,
     index,
@@ -37,7 +43,25 @@ export function TaskCard({
       </button>
 
       <h3 className={styles.title}>{title}</h3>
-      <p className={styles.assignee}>{assigneeName}</p>
+      <div className={styles.metadata}>
+        <p className={styles.assignee}>
+          {assigneeImage && assigneeImage !== failedImage && (
+            <img
+              className={styles.avatar}
+              src={assigneeImage}
+              alt=""
+              width={28}
+              height={28}
+              draggable={false}
+              onError={() => setFailedImage(assigneeImage)}
+            />
+          )}
+          {assigneeName}
+        </p>
+        <span className={styles.points}>
+          {points} {points === 1 ? 'point' : 'points'}
+        </span>
+      </div>
     </article>
   );
 }

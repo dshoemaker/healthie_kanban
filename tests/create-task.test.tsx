@@ -113,3 +113,32 @@ test('a fresh board has three empty columns', async () => {
   expect(column('Doing').queryByRole('article')).not.toBeInTheDocument();
   expect(column('Done').queryByRole('article')).not.toBeInTheDocument();
 });
+
+test('a created card shows the selected assignee avatar from the API', async () => {
+  loadAssignees();
+  const user = userEvent.setup();
+  render(<App />);
+  await user.click(await screen.findByRole('button', { name: 'Add task' }));
+  const form = within(screen.getByRole('dialog', { name: 'Create a task' }));
+  await user.type(form.getByRole('textbox', { name: 'Title' }), 'Repair portal');
+  await user.selectOptions(form.getByRole('combobox', { name: 'Assign to' }), '2');
+  await user.click(form.getByRole('button', { name: 'Add task' }));
+  const card = within(column('To Do').getByRole('article'));
+  expect(card.getByAltText('')).toHaveAttribute('src', 'https://example.test/morty.png');
+  expect(card.getByText('Morty Smith')).toBeVisible();
+});
+
+test('a created card displays the points entered in the form', async () => {
+  loadAssignees();
+  const user = userEvent.setup();
+  render(<App />);
+  await user.click(await screen.findByRole('button', { name: 'Add task' }));
+  const form = within(screen.getByRole('dialog', { name: 'Create a task' }));
+  await user.type(form.getByRole('textbox', { name: 'Title' }), 'Repair portal');
+  const points = form.getByRole('spinbutton', { name: 'Points' });
+  await user.clear(points);
+  await user.type(points, '5');
+  await user.selectOptions(form.getByRole('combobox', { name: 'Assign to' }), '1');
+  await user.click(form.getByRole('button', { name: 'Add task' }));
+  expect(column('To Do').getByText('5 points')).toBeVisible();
+});

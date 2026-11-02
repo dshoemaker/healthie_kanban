@@ -97,6 +97,8 @@ export function Board({
                     index={index}
                     columnId={column.id}
                     title={task.title}
+                    points={task.points}
+                    assigneeImage={assignee?.image}
                     assigneeName={
                       assignee?.name ?? 'Unknown assignee'
                     }
