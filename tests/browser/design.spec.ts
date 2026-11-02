@@ -19,6 +19,16 @@ test.beforeEach(async ({ page }) => {
 
 test.afterEach(() => expect(errors).toEqual([]));
 
+test('empty columns extend to the bottom of the viewport', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.getByRole('button', { name: 'Add task' })).toBeVisible();
+  for (const section of await page.locator('section').all()) {
+    const bounds = await section.boundingBox();
+    expect(bounds!.y + bounds!.height).toBeGreaterThanOrEqual(876);
+  }
+  expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBe(900);
+});
+
 test('assignee options show a loaded avatar to the left of each name', async ({ page }, testInfo) => {
   await page.goto('/');
   await expect(page.getByRole('status', { name: '' })).toBeHidden();

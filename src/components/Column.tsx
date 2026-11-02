@@ -1,4 +1,4 @@
-import { useDroppable } from '@dnd-kit/react';
+import { useDragDropMonitor, useDroppable } from '@dnd-kit/react';
 import type { ReactNode } from 'react';
 import type { ColumnId } from '../types';
 import styles from './Column.module.css';
@@ -15,6 +15,16 @@ export function Column({ id, title, children }: ColumnProps) {
     accept: 'task',
     // Below a card under the pointer (3), above an overlapping card (2).
     collisionPriority: 2.5,
+  });
+
+  useDragDropMonitor({
+    onDragStart(event, manager) {
+      // Keyboard movement must prefer the next card over a tall column's center.
+      const column = manager.registry.droppables.get(id);
+      if (column) {
+        column.collisionPriority = event.operation.activatorEvent?.type === 'keydown' ? 0 : 2.5;
+      }
+    },
   });
 
   return (

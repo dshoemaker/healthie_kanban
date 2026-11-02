@@ -316,3 +316,18 @@ test('editing a task already in Done does not replay its celebration', async ({ 
   await expect(column(page, 'Done').getByRole('heading', { level: 3 })).toHaveText(['Finished A']);
   await expect(page.getByRole('status', { name: /^Task completed:/ })).toHaveCount(0);
 });
+
+test('keyboard movement chooses the adjacent card and a following pointer drag still works', async ({ page }) => {
+  const source = card(page, 'C');
+  await source.focus();
+  await page.keyboard.press('Space');
+  await expect(page.locator('[data-dnd-dragging]')).toHaveCount(1);
+  await page.keyboard.press('ArrowUp');
+  await page.waitForTimeout(300);
+  await page.keyboard.press('Space');
+  await expect(page.locator('[data-dnd-dragging], [data-dnd-dropping]')).toHaveCount(0);
+  await expect(column(page, 'To Do').getByRole('heading', { level: 3 })).toHaveText(['A', 'C', 'B']);
+  await drag(page, card(page, 'C'), column(page, 'Doing'), 0.7);
+  await expect(column(page, 'Doing').getByRole('heading', { level: 3 })).toHaveText(['C']);
+  await expect(column(page, 'To Do').getByRole('heading', { level: 3 })).toHaveText(['A', 'B']);
+});
