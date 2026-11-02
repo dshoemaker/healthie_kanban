@@ -35,7 +35,15 @@ export function taskReducer(
         (item) => item.columnId === action.columnId,
       );
 
-      destinationTasks.splice(action.index, 0, { ...task, columnId: action.columnId });
+      const index = Math.max(
+        0,
+        Math.min(action.index, destinationTasks.length),
+      );
+
+      destinationTasks.splice(index, 0, {
+        ...task,
+        columnId: action.columnId,
+      });
 
       return [
         ...remainingTasks.filter(
