@@ -18,18 +18,22 @@ export function CreateTaskForm({
   function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!title.trim()) {
+    const trimmedTitle = title.trim();
+    const assigneeExists = assignees.some(
+      (assignee) => assignee.id === assigneeId,
+    );
+
+    if (!trimmedTitle || !assigneeExists) {
       return;
     }
 
     onCreate({
-      title: title.trim(),
+      title: trimmedTitle,
       assigneeId,
     });
 
     setTitle('');
     setAssigneeId('');
-
   }
 
   return (
