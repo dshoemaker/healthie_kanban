@@ -1,0 +1,47 @@
+import { expect, test } from '@playwright/test';
+
+const errors: string[] = [];
+
+test.beforeEach(async ({ page }) => {
+  errors.length = 0;
+  page.on('pageerror', (error) => errors.push(error.message));
+  await page.route('https://rickandmortyapi.com/graphql', (route) => route.fulfill({
+    json: { data: { characters: { results: [
+      { id: '1', name: 'Rick Sanchez', image: 'https://example.test/rick.png' },
+      { id: '2', name: 'Morty Smith', image: 'https://example.test/morty.png' },
+    ] } } },
+  }));
+  await page.route('https://example.test/*.png', (route) => route.fulfill({
+    contentType: 'image/svg+xml',
+    body: '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28"><rect width="28" height="28" fill="#3454b4"/></svg>',
+  }));
+});
+
+test.afterEach(() => expect(errors).toEqual([]));
+
+test('assignee options show a loaded avatar to the left of each name', async ({ page }, testInfo) => {
+  await page.goto('/');
+  await expect(page.getByRole('status', { name: '' })).toBeHidden();
+  await page.getByRole('button', { name: 'Add task' }).click();
+  const picker = page.getByRole('combobox', { name: 'Assign to' });
+  await picker.click();
+  const option = page.getByRole('option', { name: 'Morty Smith' });
+  const avatar = option.locator('img');
+  await expect(avatar).toBeVisible();
+  await expect.poll(() => avatar.evaluate((image) =>
+    image instanceof HTMLImageElement && image.complete && image.naturalWidth > 0,
+  )).toBe(true);
+  const imageBounds = await avatar.boundingBox();
+  const nameBounds = await option.locator('span').boundingBox();
+  expect(imageBounds!.x + imageBounds!.width).toBeLessThanOrEqual(nameBounds!.x);
+  await page.screenshot({ path: testInfo.outputPath('assignee-avatar-options.png') });
+  await option.click();
+  await expect(picker).toHaveValue('2');
+  await picker.focus();
+  await page.keyboard.press('Space');
+  await page.keyboard.press('Home');
+  await page.keyboard.press('Enter');
+  await expect(picker).toHaveValue('');
+  await expect(page.getByRole('dialog')).toBeVisible();
+});
+

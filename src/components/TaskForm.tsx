@@ -97,7 +97,7 @@ export function TaskForm({
         <label className={styles.field}>
           <span>Assign to</span>
           <select
-            className={styles.control}
+            className={`${styles.control} ${styles.assigneeSelect}`}
             value={assigneeId}
             onChange={(event) => setAssigneeId(event.target.value)}
             required
@@ -105,7 +105,8 @@ export function TaskForm({
             <option value="">Choose an assignee</option>
             {assignees.map((assignee) => (
               <option key={assignee.id} value={assignee.id}>
-                {assignee.name}
+                <img className={styles.optionAvatar} src={assignee.image} alt="" width={28} height={28} />
+                <span>{assignee.name}</span>
               </option>
             ))}
           </select>

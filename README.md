@@ -48,6 +48,7 @@ Browser tests start their own Vite server on port 4173; leave that port free. Fa
 - Click a card, or focus it and press Enter, to open the expanded task editor. Save changes updates its title, description, points and assignee; Cancel, Escape or the backdrop discards edits.
 - Drag from anywhere on a card, including its title, avatar, assignee name or points badge. For keyboard movement, focus the card and use Space, arrow keys, and Space again.
 - Cards show the assigned person's API avatar and a numeric points badge. If the image is unavailable, the name remains visible.
+- The assignee dropdown shows avatars to the left of names using native customizable select styling. Browsers without `appearance: base-select` support retain a standard text-only select.
 - Drop on a card to change its position, or on a column background to append it.
 - Task state lives in memory and clears on refresh.
 - Only the first page of assignees is loaded.
