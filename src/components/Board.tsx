@@ -14,25 +14,25 @@ const initialTasks: Task[] = [
   {
     id: 'task-1',
     title: 'Repair the portal gun',
-    characterName: 'Rick Sanchez',
+    assigneeName: 'Rick Sanchez',
     columnId: 'todo',
   },
   {
     id: 'task-2',
     title: 'Pack supplies',
-    characterName: 'Morty Smith',
+    assigneeName: 'Morty Smith',
     columnId: 'todo',
   },
   {
     id: 'task-3',
     title: 'Explore a new dimension',
-    characterName: 'Summer Smith',
+    assigneeName: 'Summer Smith',
     columnId: 'doing',
   },
   {
     id: 'task-4',
     title: 'Return to Earth',
-    characterName: 'Beth Smith',
+    assigneeName: 'Beth Smith',
     columnId: 'done',
   },
 ];
@@ -50,7 +50,7 @@ export function Board() {
               <TaskCard
                 key={task.id}
                 title={task.title}
-                characterName={task.characterName}
+                assigneeName={task.assigneeName}
               />
             ))}
         </Column>
