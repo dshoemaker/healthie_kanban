@@ -12,7 +12,7 @@ function App() {
         </p>
       </header>
 
-      <Board />
+      <Board tasks={[]} assignees={[]} />
       <AssigneePreview />
     </main>
   );
