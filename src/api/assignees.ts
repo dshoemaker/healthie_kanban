@@ -33,9 +33,21 @@ export async function fetchAssignees(
     signal,
   });
 
+  if (!response.ok) {
+    throw new Error(`Assignee request failed (${response.status}).`);
+  }
+
   const result: CharactersResponse = await response.json();
 
-  return result.data!.characters!.results.filter(
+  if (result.errors?.length) {
+    throw new Error(result.errors[0].message);
+  }
+
+  if (!result.data?.characters) {
+    throw new Error('The response did not contain assignee data.');
+  }
+
+  return result.data.characters.results.filter(
     (assignee): assignee is Assignee => assignee !== null,
   );
 }

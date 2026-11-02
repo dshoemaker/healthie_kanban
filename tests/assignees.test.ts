@@ -29,3 +29,26 @@ test('null entries do not become blank assignees', async () => {
   respond({ data: { characters: { results: [null, rick, null] } } });
   expect(await fetchAssignees(new AbortController().signal)).toEqual([rick]);
 });
+
+test('HTTP failures reject with the response status', async () => {
+  respond({}, 503);
+  await expect(fetchAssignees(new AbortController().signal))
+    .rejects.toThrow('Assignee request failed (503).');
+});
+
+test('GraphQL errors are failures even with HTTP 200', async () => {
+  respond({ errors: [{ message: 'Query unavailable' }] });
+  await expect(fetchAssignees(new AbortController().signal))
+    .rejects.toThrow('Query unavailable');
+});
+
+test('missing assignee data produces a useful failure', async () => {
+  respond({ data: { characters: null } });
+  await expect(fetchAssignees(new AbortController().signal))
+    .rejects.toThrow('The response did not contain assignee data.');
+});
+
+test('network failures propagate to the caller', async () => {
+  vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Network offline')));
+  await expect(fetchAssignees(new AbortController().signal)).rejects.toThrow('Network offline');
+});
