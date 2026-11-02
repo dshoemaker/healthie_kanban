@@ -3,7 +3,13 @@
   min-height: 300px;
   padding: 16px;
   background: #eaf0f7;
+  border: 2px solid transparent;
   border-radius: 12px;
+}
+
+.column[data-drop-target='true'] {
+  border-color: #3454b4;
+  background: #e2e9fa;
 }
 
 .heading {

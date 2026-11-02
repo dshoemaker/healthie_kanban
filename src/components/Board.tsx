@@ -41,6 +41,21 @@ export function Board({
 
         const taskId = String(source.id);
 
+        const targetColumn = columns.find(
+          (column) => column.id === target.id,
+        );
+
+        if (targetColumn) {
+          const destinationCount = tasks.filter(
+            (task) =>
+              task.columnId === targetColumn.id &&
+              task.id !== taskId,
+          ).length;
+
+          onMoveTask(taskId, targetColumn.id, destinationCount);
+          return;
+        }
+
         const destinationColumn = columns.find(
           (column) => column.id === source.group,
         );
@@ -63,6 +78,7 @@ export function Board({
         {columns.map((column) => (
           <Column
             key={column.id}
+            id={column.id}
             title={column.title}
           >
             {tasks

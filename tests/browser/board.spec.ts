@@ -26,6 +26,12 @@ function card(page: Page, title: string) {
   return page.getByRole('article').filter({ has: page.getByRole('heading', { name: title, exact: true }) });
 }
 
+async function addTask(page: Page, title: string) {
+  await page.getByRole('textbox', { name: 'Title' }).fill(title);
+  await page.getByRole('combobox', { name: 'Assign to' }).selectOption('1');
+  await page.getByRole('button', { name: 'Add task' }).click();
+}
+
 async function drag(page: Page, source: Locator, target: Locator, vertical = 0.5) {
   const from = await source.getByRole('button').boundingBox();
   const to = await target.boundingBox();
@@ -41,10 +47,19 @@ async function drag(page: Page, source: Locator, target: Locator, vertical = 0.5
 
 test('pointer dragging reorders a card from first to last', async ({ page }) => {
   await drag(page, card(page, 'A'), card(page, 'C'), 0.9);
-  await expect(column(page, 'To Do').getByRole('heading', { level: 3 })).toHaveText(['B', 'C', 'A']);
+  await addTask(page, 'D');
+  await expect(column(page, 'To Do').getByRole('heading', { level: 3 })).toHaveText(['B', 'C', 'A', 'D']);
 });
 
 test('pointer dragging reorders a card from last to first', async ({ page }) => {
   await drag(page, card(page, 'C'), card(page, 'A'), 0.1);
-  await expect(column(page, 'To Do').getByRole('heading', { level: 3 })).toHaveText(['C', 'A', 'B']);
+  await addTask(page, 'D');
+  await expect(column(page, 'To Do').getByRole('heading', { level: 3 })).toHaveText(['C', 'A', 'B', 'D']);
+});
+
+test('a card can move into an empty column', async ({ page }) => {
+  await drag(page, card(page, 'A'), column(page, 'Doing'), 0.7);
+  await addTask(page, 'D');
+  await expect(column(page, 'Doing').getByRole('heading', { level: 3 })).toHaveText(['A']);
+  await expect(column(page, 'To Do').getByRole('heading', { level: 3 })).toHaveText(['B', 'C', 'D']);
 });
