@@ -34,14 +34,18 @@ export function createDemoTasks(assignees: Assignee[]): Task[] {
     const other = Math.floor(Math.random() * (index + 1));
     [shuffled[index], shuffled[other]] = [shuffled[other], shuffled[index]];
   }
-  const columns: ColumnId[] = ['todo', 'doing', 'done'];
+  const columns: ColumnId[] = [
+    ...Array<ColumnId>(6).fill('todo'),
+    ...Array<ColumnId>(3).fill('doing'),
+    'done',
+  ];
   const estimates = [0, 1, 2, 3, 5, 8];
-  return shuffled.slice(0, 18).map((title, index) => ({
+  return shuffled.slice(0, columns.length).map((title, index) => ({
     id: crypto.randomUUID(),
     title,
     description: `${title}. Check the equipment in the garage and leave notes for the next interdimensional adventure.`,
     points: estimates[Math.floor(Math.random() * estimates.length)],
     assigneeId: assignees[Math.floor(Math.random() * assignees.length)].id,
-    columnId: columns[index % columns.length],
+    columnId: columns[index],
   }));
 }

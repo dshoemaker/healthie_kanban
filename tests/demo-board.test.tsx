@@ -36,10 +36,10 @@ test('Seed board populates all three columns with themed tickets and API assigne
   await waitFor(() => expect(screen.queryByText('Loading assignees…')).not.toBeInTheDocument());
   await waitFor(() => expect(screen.getByRole('button', { name: 'Seed board' })).toBeEnabled());
   await user.click(screen.getByRole('button', { name: 'Seed board' }));
-  expect(screen.getAllByRole('article')).toHaveLength(18);
-  for (const name of ['To Do', 'Doing', 'Done']) {
-    expect(column(name).getAllByRole('article')).toHaveLength(6);
-  }
+  expect(screen.getAllByRole('article')).toHaveLength(10);
+  expect(column('To Do').getAllByRole('article')).toHaveLength(6);
+  expect(column('Doing').getAllByRole('article')).toHaveLength(3);
+  expect(column('Done').getAllByRole('article')).toHaveLength(1);
   for (const card of screen.getAllByRole('article')) {
     expect(within(card).getByText(/Rick Sanchez|Morty Smith/)).toBeVisible();
     expect(within(card).getByRole('heading')).toHaveTextContent(/portal|Rick|Morty|Meeseeks|Citadel|dimension|Schwifty|pickle|Plumbus|Birdperson|Jerry|Summer|Beth|Council/i);
@@ -58,7 +58,7 @@ test('Clear board removes seeded and manually created tasks', async () => {
   await user.type(screen.getByRole('textbox', { name: 'Title' }), 'My own ticket');
   await user.selectOptions(screen.getByRole('combobox', { name: 'Assign to' }), '1');
   await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Add task' }));
-  expect(screen.getAllByRole('article')).toHaveLength(19);
+  expect(screen.getAllByRole('article')).toHaveLength(11);
   await user.click(screen.getByRole('button', { name: 'Clear board' }));
   expect(screen.queryByRole('article')).not.toBeInTheDocument();
   expect(screen.getByRole('button', { name: 'Clear board' })).toBeDisabled();
@@ -81,7 +81,7 @@ test('reseeding replaces existing tickets with another randomized board', async 
   random.mockReturnValue(0.999);
   await waitFor(() => expect(screen.getByRole('button', { name: 'Seed board' })).toBeEnabled());
   await user.click(screen.getByRole('button', { name: 'Seed board' }));
-  expect(screen.getAllByRole('article')).toHaveLength(18);
+  expect(screen.getAllByRole('article')).toHaveLength(10);
   const secondTitles = screen.getAllByRole('heading', { level: 3 }).map((heading) => heading.textContent);
   expect(secondTitles).not.toEqual(firstTitles);
 });

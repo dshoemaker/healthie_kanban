@@ -57,6 +57,6 @@ Browser tests start their own Vite server on port 4173; leave that port free. Fa
 - Cards change position on drop. React owns their DOM placement to avoid cross-column conflicts with optimistic sorting.
 - Moving a task from To Do or Doing into Done opens a green CSS portal and materializes the card over 1.6 seconds. Reordering within Done, editing, and canceled moves do not start a celebration. Leaving and returning to Done celebrates again.
 - Reduced-motion preferences replace the teleport animation with a static portal glow. Completion feedback is also announced to screen readers.
-- Add `?seed=true` to the app URL to reveal **Seed board** and **Clear board**. Nothing is populated automatically. Seed replaces the current board with 18 randomized Rick and Morty themed tickets, six per column, and requires loaded assignees. Clear removes all tickets. These controls are hidden for other query values.
+- Add `?seed=true` to the app URL to reveal **Seed board** and **Clear board**. Nothing is populated automatically. Seed replaces the current board with 10 randomized Rick and Morty themed tickets from the full seed pool: six in To Do, three in Doing, and one in Done, and requires loaded assignees. Clear removes all tickets. These controls are hidden for other query values.
 - Filtering and persistence remain potential interview extensions.
 

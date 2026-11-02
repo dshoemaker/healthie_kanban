@@ -58,7 +58,7 @@ test('assignee options show a loaded avatar to the left of each name', async ({ 
 test('populated columns grow beyond the viewport and demo controls can clear them', async ({ page }, testInfo) => {
   await page.goto('/?seed=true');
   await page.getByRole('button', { name: 'Seed board' }).click();
-  await expect(page.getByRole('article')).toHaveCount(18);
+  await expect(page.getByRole('article')).toHaveCount(10);
   const bottoms: number[] = [];
   for (const section of await page.locator('section').all()) {
     const bounds = await section.boundingBox();
