@@ -1,3 +1,4 @@
+import { StrictMode } from 'react';
 import { act, render, screen } from '@testing-library/react';
 import { expect, test, vi } from 'vitest';
 import App from '../src/App';
@@ -49,4 +50,26 @@ test('leaving the screen aborts loading and ignores a late failure', async () =>
   expect(signal?.aborted).toBe(true);
   await act(async () => rejectRequest(new DOMException('Aborted', 'AbortError')));
   expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+});
+
+test('an aborted development-mode request cannot replace the active request with an error', async () => {
+  let rejectFirst: (error: Error) => void = () => {};
+  let resolveSecond: (response: Response) => void = () => {};
+  const signals: AbortSignal[] = [];
+  vi.stubGlobal('fetch', vi.fn((_url: string, options: RequestInit) => {
+    signals.push(options.signal!);
+    return new Promise<Response>((resolve, reject) => {
+      if (signals.length === 1) rejectFirst = reject;
+      else resolveSecond = resolve;
+    });
+  }));
+  render(<StrictMode><App /></StrictMode>);
+  expect(signals[0].aborted).toBe(true);
+  await act(async () => rejectFirst(new DOMException('Aborted', 'AbortError')));
+  expect(screen.getByRole('status')).toHaveTextContent('Loading assignees');
+  expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  await act(async () => resolveSecond(new Response(JSON.stringify({
+    data: { characters: { results: [rick] } },
+  }))));
+  expect(await screen.findByRole('option', { name: 'Rick Sanchez' })).toBeVisible();
 });

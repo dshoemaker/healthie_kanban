@@ -59,3 +59,10 @@ test('a 429 explains rate limiting without retrying automatically', async () => 
     .rejects.toThrow('Too many requests. Please try again later.');
   expect(fetch).toHaveBeenCalledTimes(1);
 });
+
+test('a 429 without Retry-After still explains rate limiting', async () => {
+  const fetch = respond({}, 429);
+  await expect(fetchAssignees(new AbortController().signal))
+    .rejects.toThrow('Too many requests. Please try again later.');
+  expect(fetch).toHaveBeenCalledTimes(1);
+});

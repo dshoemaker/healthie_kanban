@@ -6,7 +6,15 @@ const assignees = [
   { id: '2', name: 'Morty Smith', image: 'https://example.test/morty.png' },
 ];
 
+const pageErrors: string[] = [];
+
+test.afterEach(() => {
+  expect(pageErrors).toEqual([]);
+});
+
 test.beforeEach(async ({ page }) => {
+  pageErrors.length = 0;
+  page.on('pageerror', (error) => pageErrors.push(error.message));
   await page.route('https://rickandmortyapi.com/graphql', (route) => route.fulfill({
     json: { data: { characters: { results: assignees } } },
   }));
@@ -32,7 +40,7 @@ async function addTask(page: Page, title: string) {
   await page.getByRole('button', { name: 'Add task' }).click();
 }
 
-async function drag(page: Page, source: Locator, target: Locator, vertical = 0.5) {
+async function drag(page: Page, source: Locator, target: Locator, vertical = 0.5, cancel = false) {
   const from = await source.getByRole('button').boundingBox();
   const to = await target.boundingBox();
   if (!from || !to) throw new Error('Drag endpoints must be visible');
@@ -42,6 +50,7 @@ async function drag(page: Page, source: Locator, target: Locator, vertical = 0.5
   await page.mouse.move(to.x + to.width / 2, to.y + to.height * vertical, { steps: 20 });
   // Let the drag preview and collision detection settle before releasing.
   await page.waitForTimeout(250);
+  if (cancel) await page.keyboard.press('Escape');
   await page.mouse.up();
   // Wait for dnd-kit's drop animation before starting another interaction.
   await expect(page.locator('[data-dnd-dragging], [data-dnd-dropping]')).toHaveCount(0);
@@ -74,4 +83,40 @@ test('a task can transfer between cards in a populated column', async ({ page })
   await addTask(page, 'D');
   await expect(column(page, 'Doing').getByRole('heading', { level: 3 })).toHaveText(['A', 'B', 'C']);
   await expect(column(page, 'To Do').getByRole('heading', { level: 3 })).toHaveText(['D']);
+});
+
+test('Escape cancels a drag without changing task order', async ({ page }) => {
+  await drag(page, card(page, 'A'), card(page, 'C'), 0.9, true);
+  await addTask(page, 'D');
+  await expect(column(page, 'To Do').getByRole('heading', { level: 3 })).toHaveText(['A', 'B', 'C', 'D']);
+});
+
+test('dropping outside the board preserves task placement', async ({ page }) => {
+  await drag(page, card(page, 'A'), page.getByRole('heading', { name: 'Dimension Board' }));
+  await addTask(page, 'D');
+  await expect(column(page, 'To Do').getByRole('heading', { level: 3 })).toHaveText(['A', 'B', 'C', 'D']);
+  await expect(column(page, 'Doing').getByRole('article')).toHaveCount(0);
+  await expect(column(page, 'Done').getByRole('article')).toHaveCount(0);
+});
+
+test('keyboard users can pick up, reorder and drop a task', async ({ page }) => {
+  const handle = card(page, 'A').getByRole('button', { name: 'Move task: A' });
+  await handle.focus();
+  await page.keyboard.press('Space');
+  await expect(page.locator('[data-dnd-dragging]')).toHaveCount(1);
+  await page.keyboard.press('ArrowDown');
+  await page.waitForTimeout(300);
+  await page.keyboard.press('Space');
+  await expect(page.locator('[data-dnd-dragging], [data-dnd-dropping]')).toHaveCount(0);
+  await addTask(page, 'D');
+  await expect(column(page, 'To Do').getByRole('heading', { level: 3 })).toHaveText(['B', 'A', 'C', 'D']);
+});
+
+test('moving the only card out of a column leaves it empty', async ({ page }) => {
+  await drag(page, card(page, 'A'), column(page, 'Doing'), 0.7);
+  await drag(page, card(page, 'A'), column(page, 'Done'), 0.7);
+  await addTask(page, 'D');
+  await expect(column(page, 'Doing').getByRole('article')).toHaveCount(0);
+  await expect(column(page, 'Done').getByRole('heading', { level: 3 })).toHaveText(['A']);
+  await expect(column(page, 'To Do').getByRole('heading', { level: 3 })).toHaveText(['B', 'C', 'D']);
 });
